@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1234194460569171562}
   - component: {fileID: 1305693227721174818}
   - component: {fileID: 804696980743857418}
-  m_Layer: 0
-  m_Name: dimian_B
-  m_TagString: Untagged
+  m_Layer: 3
+  m_Name: brick
+  m_TagString: brick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -0.886, y: -0.218, z: -1.214}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8083200801221234825}
@@ -92,7 +92,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8083200801221234825}
-  m_Layer: 0
+  - component: {fileID: 4193062676390838696}
+  m_Layer: 3
   m_Name: BrickBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,10 +113,31 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 673014208391609056}
   - {fileID: 1234194460569171562}
+  - {fileID: 673014208391609056}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4193062676390838696
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7893010250352186602}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0030437, y: 1.0366434, z: 1}
+  m_Center: {x: -0.8873763, y: -0.6880575, z: -1.21}
 --- !u!1 &8431038171223060418
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,8 +149,8 @@ GameObject:
   - component: {fileID: 673014208391609056}
   - component: {fileID: 3350684048450949902}
   - component: {fileID: 2246233828321918779}
-  m_Layer: 0
-  m_Name: di
+  m_Layer: 3
+  m_Name: platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

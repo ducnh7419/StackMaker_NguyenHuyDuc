@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
-    public static GameManager ins;
-    public GameManager Ins =>ins;
+    public static UIManager ins;
+    public UIManager Ins =>ins;
 
 
 
@@ -14,7 +14,4 @@ public class GameManager : MonoBehaviour
     {
         ins=this;
     }
-    
-
-    
 }

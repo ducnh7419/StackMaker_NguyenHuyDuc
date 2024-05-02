@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    readonly LevelGenerator levelGenerator;
+    public static LevelManager ins;
+    public LevelManager Ins =>ins;
+
+
 
     // Update is called once per frame
-    void Update()
+    void Awake()
     {
-        
+        ins=this;
+    }
+
+    public void GenerateLevel(){
+        levelGenerator.GenerateLevel(1);
     }
 }

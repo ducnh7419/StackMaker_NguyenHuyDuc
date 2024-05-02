@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class MapGenerator : MonoBehaviour
+public class LevelGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject backgroundBlock;
     [SerializeField] private GameObject brickBlock;
@@ -17,8 +17,18 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private GameObject finishLineBlock;
     [SerializeField] private GameObject player;
     private int noBrickBlock=0;
+    public enum MapStructEnum{
+        None,
+        BrickBlock,
+        WallBlock,
+        BridegeBlock,
+        BridgeWallBlock,
+        FinishLineBlock,
+        FinishBridge,
+        StartPoint=10
+    }
 
-    public void GenMap(int level){
+    public void GenerateLevel(int level){
         string path=String.Format("Assets/_Game/Resources/Level/{0}.txt",level);
         int[][] levelStruct=ReadTextFile(path);
         Vector3 startPoint=new Vector3(0,0,0);
@@ -29,10 +39,10 @@ public class MapGenerator : MonoBehaviour
             for (int j = 0; j < levelStruct[i].Length; j++)
             {
                 switch(levelStruct[i][j]){
-                    case 0:
+                    case (int)MapStructEnum.None:
                         pos.x+=backgroundBlock.transform.localScale.x;
                         break;
-                    case 1:
+                    case (int)MapStructEnum.BrickBlock:
                         if(startPoint!= Vector3.zero){
                             Debug.Log(startPoint);
                             Vector3 playerDirection=(pos-startPoint).normalized*90;
@@ -48,22 +58,22 @@ public class MapGenerator : MonoBehaviour
                         MapStructRowInstantiate(brickBlock,ref pos);
                         noBrickBlock++;
                         break;
-                    case 2:
+                    case (int)MapStructEnum.WallBlock:
                         MapStructRowInstantiate(wallBlock,ref pos);
                         break;
-                    case 3:
+                    case (int)MapStructEnum.BridegeBlock:
                         MapStructRowInstantiate(bridgeBlock,ref pos);
                         break;
-                    case 4:
+                    case (int)MapStructEnum.BridgeWallBlock:
                         MapStructRowInstantiate(bridgeWallBlock,ref pos);
                         break;
-                    case 5:
+                    case (int)MapStructEnum.FinishLineBlock:
                         MapStructRowInstantiate(finishLineBlock,ref pos);
                         break;
-                    case 6:
+                    case (int)MapStructEnum.FinishBridge:
                         FinishBridgeInstantiate(pos);
                         break;
-                    case 10:
+                    case (int)MapStructEnum.StartPoint:
                         startPoint=pos;
                         MapStructRowInstantiate(brickBlock,ref pos);
                         noBrickBlock++;
@@ -104,7 +114,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     private void Start() {
-        GenMap(1);
+        GenerateLevel(1);
     }
 
     public int[][] ReadTextFile(string filePath)
