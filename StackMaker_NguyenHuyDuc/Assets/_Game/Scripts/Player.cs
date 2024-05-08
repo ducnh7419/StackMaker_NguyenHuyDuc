@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -7,7 +9,7 @@ public class Player : MonoBehaviour
     private Vector3 buttonDownPoint=Vector3.zero;
     private Vector3 buttonUpPoint=Vector3.zero;
     [SerializeField]private float speed;
-    private Stack<GameObject> playerBricks=new Stack<GameObject>(); 
+    private bool isMoving;
 
     public enum Direct{      
         Forward,
@@ -23,6 +25,7 @@ public class Player : MonoBehaviour
     }
 
     void OnInit(){
+        isMoving=false;
         direct = Direct.None;
     }
     
@@ -34,11 +37,13 @@ public class Player : MonoBehaviour
     }
 
     private void PlayerControl(){
-        if(Input.GetMouseButtonDown(0)){
-            buttonDownPoint=Input.mousePosition;
-        }
-        if(Input.GetMouseButtonUp(0)){
-            buttonUpPoint=Input.mousePosition;
+        if(!isMoving){
+            if(Input.GetMouseButtonDown(0)){
+                buttonDownPoint=Input.mousePosition;
+            }
+            if(Input.GetMouseButtonUp(0)){
+                buttonUpPoint=Input.mousePosition;
+            }
         }
         Vector3 direction=Vector3.zero;
         if(buttonDownPoint!=Vector3.zero&&buttonUpPoint!=Vector3.zero){
@@ -64,87 +69,132 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        Vector3 directionVector=Vector3.zero;
         switch(direct){
-                case Direct.Forward:
+                case Direct.Forward:                  
                     Debug.Log("Forward");
-                    AddOrRemoveBrick();
-                    rb.velocity=speed * Time.deltaTime * Vector3.forward;
+                    directionVector=Vector3.forward;
+                    if(!CheckWall(directionVector)){
+                        isMoving=true;
+                        AddOrRemoveBrick();
+                        rb.velocity=speed * Time.deltaTime * directionVector;
+                    }else{
+                        isMoving=false;
+                        direct=Direct.None;
+                        rb.velocity=Vector3.zero;
+                    }
                     rb.rotation=Quaternion.Euler(0,0,0);
+                    // rb.rotation=Quaternion.Euler(Vector3.up*180);
                     break;
                 case Direct.Back:
-                    Debug.Log("Back");
-                    AddOrRemoveBrick();
-                    rb.velocity=speed * Time.deltaTime * Vector3.back;
+                    directionVector=Vector3.back;
+                    if(!CheckWall(directionVector)){
+                        isMoving=true;
+                        AddOrRemoveBrick();
+                        rb.velocity=speed * Time.deltaTime * directionVector;
+                    }else{
+                        isMoving=false;
+                        direct=Direct.None;
+                        rb.velocity=Vector3.zero;
+                    }
+                    // rb.rotation=Quaternion.Euler(0,0,0);
                     rb.rotation=Quaternion.Euler(Vector3.down*180);
                     break;
                 case Direct.Left:
-                    Debug.Log("Left");
-                    AddOrRemoveBrick();
-                    rb.velocity=speed * Time.deltaTime * Vector3.left;
+                    directionVector=Vector3.left;
+                    if(!CheckWall(directionVector)){
+                        isMoving=true;
+                        AddOrRemoveBrick();
+                        rb.velocity=speed * Time.deltaTime * directionVector;
+                    }else{
+                        isMoving=false;
+                        direct=Direct.None;
+                        rb.velocity=Vector3.zero;
+                    }           
                     rb.rotation=Quaternion.Euler(Vector3.down*90);
                     break;
                 case Direct.Right:
-                    Debug.Log("Right");
-                    AddOrRemoveBrick();
-                    rb.velocity=speed * Time.deltaTime * Vector3.right;
+                    directionVector=Vector3.right;
+                    if(!CheckWall(directionVector)){
+                        isMoving=true;
+                        AddOrRemoveBrick();
+                        rb.velocity=speed * Time.deltaTime * directionVector;
+                    }else{
+                        isMoving=false;
+                        rb.velocity=Vector3.zero;
+                    }
                     rb.rotation=Quaternion.Euler(Vector3.up*90);
                     break;
                 case Direct.None:
+                    isMoving=false;
+                    rb.velocity=Vector3.zero;
                     break;
-        }      
+        }
+             
     }
 
     private void AddOrRemoveBrick(){
-        GameObject block=new GameObject();
-        if(CheckBrick(ref block)){
-            AddBrick(rb.gameObject,block);
-        }else{
-            RemoveBrick(rb.gameObject,block);
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f))
+        {
             
+            GameObject block=hit.collider.gameObject;
+            if(block.CompareTag("brick")){
+                AddBrick(rb.gameObject,block);}
+            if(block.CompareTag("bridge")){
+                RemoveBrick(rb.gameObject,block);                
+            }
+            if(block.CompareTag("Finish Bridge")){          
+                block.transform.parent.GetChild(1).GetChild(0).GetComponent<Renderer>().material.color=Color.blue;
+                block.transform.parent.GetChild(2).GetChild(0).GetComponent<Renderer>().material.color=Color.green;
+                RemoveBrick(rb.gameObject,block);
+            }
+            block.GetComponent<Collider>().enabled=false;
         }
     }
 
-    private bool CheckBrick(ref GameObject block){
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f))
+    private bool CheckWall(Vector3 direction){       
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, .5f))
         {
-            Debug.DrawLine(transform.position, hit.point, Color.red);
-            block=hit.collider.gameObject;
-            Transform child=hit.collider.gameObject.transform.GetChild(0);
-            if(child.CompareTag("brick")){
-                if(child.gameObject.activeSelf){
-                    return true;
-                }
+            
+            GameObject block=hit.collider.gameObject;
+            if(block.CompareTag("wall")){
+                return true;
             }
         }
         return false;
     }
 
     private void AddBrick(GameObject player,GameObject brickBlock){
-        // Get Brick GameObject of brick block
+        
+
+        // Get Brick GameObject Transform of brick block
         Transform brick=brickBlock.transform.GetChild(0);
         //Get player animation
         GameObject playerAnim= player.transform.GetChild(0).gameObject;
         // find the real size of brick
         Vector3 size=brick.GetComponent<MeshRenderer>().bounds.size;
         //Move the animation up by the y size of brick
-        playerAnim.transform.position+=new Vector3(0,size.y,0);
+        playerAnim.transform.position+=new Vector3(0,size.y,0);       
         Transform go=Instantiate(brick, playerAnim.transform.position, brick.transform.rotation);
+        // go.transform.GetComponent<Collider>().enabled=true;
         // attatch brick to player
-        go.SetParent(player.transform);
+        go.SetParent(player.transform);     
         brick.gameObject.SetActive(false);
-        playerBricks.Push(brick.gameObject);
     }
 
     private void RemoveBrick(GameObject player,GameObject brickBlock){
-        Transform brick=brickBlock.transform.GetChild(0);
+        Transform brick=player.transform.GetChild(player.transform.childCount-1);       
         GameObject playerAnim= player.transform.GetChild(0).gameObject;
-        if(playerBricks.Count>0){
-            GameObject destroyBrick=playerBricks.Pop();
-            Destroy(destroyBrick);
-            Vector3 size=brick.GetComponent<MeshRenderer>().bounds.size;
-            playerAnim.transform.position-=new Vector3(0,size.y,0);
-        
-            brick.gameObject.SetActive(true);
-        }
+        Destroy(brick.gameObject);
+        Vector3 size=brick.GetComponent<MeshRenderer>().bounds.size;
+        playerAnim.transform.position-=new Vector3(0,size.y,0);       
+        brickBlock.transform.GetChild(0).gameObject.SetActive(true);       
+    }
+
+    private  void OnDrawGizmos() {
+        Vector3 direction=Vector3.forward;
+        Debug.Log("Draw "+direction );
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.TransformDirection(direction) * .5f);
     }
 }

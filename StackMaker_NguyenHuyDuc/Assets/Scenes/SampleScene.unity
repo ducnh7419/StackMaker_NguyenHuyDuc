@@ -228,6 +228,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -309,6 +310,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 24.64, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac640195b30ff3478dbd9bba8bd7951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  smoothSpeed: 0.05
+  offset: {x: 3, y: 10, z: -15}
 --- !u!1 &2076030509
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,12 +369,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4194815077c5fe44d8afc7cc22ea725c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 963194227}
   backgroundBlock: {fileID: 3586857564777161409, guid: 5b419751e542ff0428307cfe897c88bd, type: 3}
   brickBlock: {fileID: 7893010250352186602, guid: 47941cb08a7266248b1590d172e8f4da, type: 3}
   wallBlock: {fileID: 9149903494767165280, guid: 3d499bb62bff4fd4c96ea0593661609e, type: 3}
   bridgeBlock: {fileID: 5792613958688929218, guid: 1a22f1c6c3427ff4abe8601bddeedea6, type: 3}
-  bridgeWallBlock: {fileID: 3456295378613277851, guid: 33a827a075ee18a40b6b2f58d1c6334f, type: 3}
   finishLineBlock: {fileID: 2192439993083102128, guid: f243a98e18497db44bfbc8ab731fda49, type: 3}
+  winPos: {fileID: 5879156454356601932, guid: c829e579ecd6ab747bfe3cfeb0830393, type: 3}
   player: {fileID: 2451869308115212638, guid: a7182a41afcc2ab4198795b0c8186aa8, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

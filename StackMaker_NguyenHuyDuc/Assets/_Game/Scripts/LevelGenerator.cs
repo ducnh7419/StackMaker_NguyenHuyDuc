@@ -9,20 +9,21 @@ using UnityEngine.UIElements;
 
 public class LevelGenerator : MonoBehaviour
 {
+    [SerializeField] private new Camera camera;
     [SerializeField] private GameObject backgroundBlock;
     [SerializeField] private GameObject brickBlock;
     [SerializeField] private GameObject wallBlock;
     [SerializeField] private GameObject bridgeBlock;
-    [SerializeField] private GameObject bridgeWallBlock;
     [SerializeField] private GameObject finishLineBlock;
+    [SerializeField] private GameObject winPos;
     [SerializeField] private GameObject player;
+    private new GameObject gameObject;
     private int noBrickBlock=0;
     public enum MapStructEnum{
         None,
         BrickBlock,
         WallBlock,
         BridegeBlock,
-        BridgeWallBlock,
         FinishLineBlock,
         FinishBridge,
         StartPoint=10
@@ -47,11 +48,13 @@ public class LevelGenerator : MonoBehaviour
                             Debug.Log(startPoint);
                             Vector3 playerDirection=(pos-startPoint).normalized*90;
                             // move player to the bottom edge of block 
-                            Vector3 playerPosition=startPoint+new Vector3(-brickBlock.transform.localScale.x+0.1f,-0.15f,-brickBlock.transform.localScale.z*1.5f);
-                            if(playerDirection.x==0){   
-                                Instantiate(player,playerPosition,Quaternion.Euler(playerDirection));
+                            Vector3 playerPosition=startPoint+new Vector3(0,-0.1f,0);
+                            if(playerDirection.x==0){
+                                GameObject playerGo=Instantiate(player,playerPosition,Quaternion.Euler(playerDirection));
+                                camera.GetComponent<CameraFollow>().target = playerGo.transform;
                             }else{
-                                Instantiate(player,playerPosition,player.transform.rotation);
+                                GameObject playerGo=Instantiate(player,playerPosition,player.transform.rotation);
+                                camera.GetComponent<CameraFollow>().target = playerGo.transform;
                             }    
                             startPoint=Vector3.zero;
                         }              
@@ -63,9 +66,7 @@ public class LevelGenerator : MonoBehaviour
                         break;
                     case (int)MapStructEnum.BridegeBlock:
                         MapStructRowInstantiate(bridgeBlock,ref pos);
-                        break;
-                    case (int)MapStructEnum.BridgeWallBlock:
-                        MapStructRowInstantiate(bridgeWallBlock,ref pos);
+                        noBrickBlock--;
                         break;
                     case (int)MapStructEnum.FinishLineBlock:
                         MapStructRowInstantiate(finishLineBlock,ref pos);
@@ -90,11 +91,13 @@ public class LevelGenerator : MonoBehaviour
         //number of background block in each column
         
         int noBackgroundBlk=5;
-        Instantiate(gameOb,pos,gameOb.transform.rotation);
-        if(gameOb!=bridgeBlock&&gameOb!=bridgeWallBlock){    
+        GameObject blockObject=Instantiate(gameOb,pos,gameOb.transform.rotation);
+        blockObject.transform.SetParent(gameObject.transform);       
+        if(gameOb!=bridgeBlock){
             for(int k=0;k<noBackgroundBlk;k++ ){
                 pos.y+=-gameOb.transform.localScale.y;
-                Instantiate(backgroundBlock,pos,backgroundBlock.transform.rotation);
+                blockObject=Instantiate(backgroundBlock,pos,backgroundBlock.transform.rotation);
+                blockObject.transform.SetParent(gameObject.transform);
             }
         }
         pos.x += gameOb.transform.localScale.x;
@@ -102,18 +105,38 @@ public class LevelGenerator : MonoBehaviour
     }
 
     private void FinishBridgeInstantiate(Vector3 pos){
+        Vector3 startPoint=pos;
         for(int i=0;i<noBrickBlock;i++){
-            Instantiate(bridgeBlock,pos,brickBlock.transform.rotation);
+            GameObject finishBridge= new GameObject("Finish Bridge");
+            finishBridge.gameObject.tag="Finish Bridge";
+            GameObject blockObject=Instantiate(bridgeBlock,pos,brickBlock.transform.rotation);
+            blockObject.gameObject.tag="Finish Bridge";
+            blockObject.transform.SetParent(finishBridge.transform);
             pos.z-=brickBlock.transform.localScale.z;
-            Instantiate(bridgeWallBlock,pos,brickBlock.transform.rotation);
+            blockObject=Instantiate(wallBlock,pos,brickBlock.transform.rotation);
+            blockObject.transform.SetParent(finishBridge.transform);
             pos.z+=brickBlock.transform.localScale.z*2;
-            Instantiate(bridgeWallBlock,pos,brickBlock.transform.rotation);
+            blockObject=Instantiate(wallBlock,pos,brickBlock.transform.rotation);
+            blockObject.transform.SetParent(finishBridge.transform);
             pos.z-=brickBlock.transform.localScale.z;
             pos.x+=brickBlock.transform.localScale.x;
+            finishBridge.transform.SetParent(gameObject.transform);
         }
+        Vector3 direction=(pos-startPoint).normalized;
+        pos.y-=3;
+        Debug.Log(direction);
+        if(!(Vector3.Distance(direction,Vector3.down)<=0.01f)){
+            GameObject go=Instantiate(winPos,pos,Quaternion.Euler(new Vector3(0,90,0)));
+            go.transform.SetParent(gameObject.transform);
+        }else{
+            GameObject go=Instantiate(winPos,pos,winPos.transform.rotation);
+            go.transform.SetParent(gameObject.transform);
+        }
+        
     }
 
     private void Start() {
+        gameObject=new GameObject("Map01");
         GenerateLevel(1);
     }
 

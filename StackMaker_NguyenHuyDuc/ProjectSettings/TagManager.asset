@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - brick
+  - wall
+  - bridge
+  - Finish Bridge
   layers:
   - Default
   - TransparentFX
@@ -12,7 +15,7 @@ TagManager:
   - BrickLayer
   - Water
   - UI
-  - 
+  - Wall
   - 
   - 
   - 
