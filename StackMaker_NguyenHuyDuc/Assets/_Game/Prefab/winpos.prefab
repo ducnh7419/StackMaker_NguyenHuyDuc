@@ -16978,7 +16978,7 @@ GameObject:
   - component: {fileID: 3370093695931332046}
   m_Layer: 0
   m_Name: baoxiang_open
-  m_TagString: Untagged
+  m_TagString: Chest
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33905,7 +33905,7 @@ GameObject:
   - component: {fileID: 3361043590160443129}
   m_Layer: 0
   m_Name: baoxiang_close
-  m_TagString: Untagged
+  m_TagString: Chest
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

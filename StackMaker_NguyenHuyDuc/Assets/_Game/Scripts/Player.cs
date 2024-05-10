@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private Vector3 buttonUpPoint=Vector3.zero;
     [SerializeField]private float speed;
     private bool isMoving;
+    private GameManager gameManager;
 
     public enum Direct{      
         Forward,
@@ -130,6 +131,7 @@ public class Player : MonoBehaviour
                     rb.velocity=Vector3.zero;
                     break;
         }
+        ReachingChest(ref direct);
              
     }
 
@@ -152,10 +154,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void ReachingChest( ref Direct direct){
+        if (Physics.Raycast(transform.position, Vector3.right , out RaycastHit hit, 1f)){
+            if(hit.collider.gameObject.CompareTag("Chest")){
+                Debug.Log("Hit");
+                GameObject closeChest=hit.collider.gameObject;
+                GameObject openChess=closeChest.transform.parent.GetChild(closeChest.transform.parent.childCount-1).gameObject;
+                openChess.SetActive(true);
+                closeChest.SetActive(false);
+                direct=Direct.None;
+                GameManager.Ins.ChangeState(GameManager.State.EndGame);
+            }
+            
+        }
+    }
+
     private bool CheckWall(Vector3 direction){       
         if (Physics.Raycast(transform.position, direction, out RaycastHit hit, .5f))
         {
-            
             GameObject block=hit.collider.gameObject;
             if(block.CompareTag("wall")){
                 return true;
@@ -193,7 +209,6 @@ public class Player : MonoBehaviour
 
     private  void OnDrawGizmos() {
         Vector3 direction=Vector3.forward;
-        Debug.Log("Draw "+direction );
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, transform.TransformDirection(direction) * .5f);
     }

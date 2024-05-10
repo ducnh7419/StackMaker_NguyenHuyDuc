@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 public class LevelGenerator : MonoBehaviour
 {
-    [SerializeField] private new Camera camera;
+    private new Camera camera;
     [SerializeField] private GameObject backgroundBlock;
     [SerializeField] private GameObject brickBlock;
     [SerializeField] private GameObject wallBlock;
@@ -17,15 +17,19 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private GameObject finishLineBlock;
     [SerializeField] private GameObject winPos;
     [SerializeField] private GameObject player;
+    private int level=0;
     private new GameObject gameObject;
     private int noBrickBlock=0;
+
+    public int Level { get => level; set => level = value; }
+
     public enum MapStructEnum{
-        None,
-        BrickBlock,
-        WallBlock,
-        BridegeBlock,
-        FinishLineBlock,
-        FinishBridge,
+        None=0,
+        BrickBlock=1,
+        WallBlock=2,
+        BridegeBlock=3,
+        FinishLineBlock=4,
+        FinishBridge=5,
         StartPoint=10
     }
 
@@ -48,7 +52,7 @@ public class LevelGenerator : MonoBehaviour
                             Debug.Log(startPoint);
                             Vector3 playerDirection=(pos-startPoint).normalized*90;
                             // move player to the bottom edge of block 
-                            Vector3 playerPosition=startPoint+new Vector3(0,-0.1f,0);
+                            Vector3 playerPosition=startPoint+new Vector3(0,-0.1f,0);                            
                             if(playerDirection.x==0){
                                 GameObject playerGo=Instantiate(player,playerPosition,Quaternion.Euler(playerDirection));
                                 camera.GetComponent<CameraFollow>().target = playerGo.transform;
@@ -106,7 +110,7 @@ public class LevelGenerator : MonoBehaviour
 
     private void FinishBridgeInstantiate(Vector3 pos){
         Vector3 startPoint=pos;
-        for(int i=0;i<noBrickBlock;i++){
+        for(int i=0;i<noBrickBlock-1;i++){
             GameObject finishBridge= new GameObject("Finish Bridge");
             finishBridge.gameObject.tag="Finish Bridge";
             GameObject blockObject=Instantiate(bridgeBlock,pos,brickBlock.transform.rotation);
@@ -136,8 +140,12 @@ public class LevelGenerator : MonoBehaviour
     }
 
     private void Start() {
-        gameObject=new GameObject("Map01");
-        GenerateLevel(1);
+        if(level!=0){
+            camera=Camera.main; 
+            gameObject=new GameObject("Map"+level);
+            GenerateLevel(level);
+            
+        }
     }
 
     public int[][] ReadTextFile(string filePath)

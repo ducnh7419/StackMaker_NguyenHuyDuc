@@ -8,6 +8,7 @@ TagManager:
   - wall
   - bridge
   - Finish Bridge
+  - Chest
   layers:
   - Default
   - TransparentFX

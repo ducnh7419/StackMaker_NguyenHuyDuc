@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    readonly LevelGenerator levelGenerator;
-    public static LevelManager ins;
-    public LevelManager Ins =>ins;
+    private static LevelManager ins;
+    public static LevelManager Ins =>ins;
+    [SerializeField] GameObject mapGenerator;
+    private Camera m_Camera;
 
 
 
@@ -14,9 +15,11 @@ public class LevelManager : MonoBehaviour
     void Awake()
     {
         ins=this;
+        m_Camera=Camera.main;
     }
 
     public void GenerateLevel(){
-        levelGenerator.GenerateLevel(1);
-    }
+        mapGenerator.GetComponent<LevelGenerator>().Level=1;
+        mapGenerator.SetActive(true);        
+    }    
 }
