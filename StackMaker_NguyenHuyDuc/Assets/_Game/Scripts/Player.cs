@@ -162,7 +162,25 @@ public class Player : MonoBehaviour
     }
 
     private void ReachingChest( ref Direct direct){
-        if (Physics.Raycast(transform.position, Vector3.right , out RaycastHit hit, 1f)){
+        Vector3 directionVector=Vector3.zero;
+        switch(direct){
+            case Direct.None:
+                break;
+            case Direct.Left:
+                directionVector=Vector3.left;
+                break;
+            case Direct.Right:
+                directionVector=Vector3.right;
+                break;
+            case Direct.Forward:
+                directionVector=Vector3.forward;
+                break;
+            case Direct.Back:
+                directionVector=Vector3.back;
+                break;
+        }
+        Debug.Log(directionVector);
+        if (Physics.Raycast(transform.position, directionVector , out RaycastHit hit, 1f)){
             if(hit.collider.gameObject.CompareTag("Chest")){
                 Debug.Log("Hit");
                 GameObject closeChest=hit.collider.gameObject;
@@ -171,6 +189,7 @@ public class Player : MonoBehaviour
                 closeChest.SetActive(false);
                 direct=Direct.None;
                 GameManager.Ins.ChangeState(GameManager.State.EndGame);
+                Time.timeScale=0;
             }
             
         }

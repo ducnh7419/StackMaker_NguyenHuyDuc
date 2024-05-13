@@ -6,13 +6,13 @@ public class UserDataManager : MonoBehaviour
 { 
     private static int currLevel=1;
 
-    private static void SaveGame(){
-        currLevel++;
-        PlayerPrefs.SetInt("currLevel", currLevel);
+    public static void SaveGame(){
+        PlayerPrefs.SetInt("currLevel", LoadGame()+1);
     }
 
     public static int LoadGame(){
-        return PlayerPrefs.GetInt("currLevel");
+        currLevel=PlayerPrefs.GetInt("currLevel");  
+        return currLevel;
     }
 
     public static void SaveGame(int level){

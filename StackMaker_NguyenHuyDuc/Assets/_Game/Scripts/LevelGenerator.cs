@@ -21,6 +21,16 @@ public class LevelGenerator : MonoBehaviour
     private new GameObject gameObject;
     private int noBrickBlock=0;
 
+    public enum Direct{      
+        Forward,
+        Back,
+        Right,
+        Left,
+        None
+    }
+
+    private Vector3 finishBridgeStartLocation;
+
     public int Level { get => level; set => level = value; }
 
     public enum MapStructEnum{
@@ -29,7 +39,8 @@ public class LevelGenerator : MonoBehaviour
         WallBlock=2,
         BridegeBlock=3,
         FinishLineBlock=4,
-        FinishBridge=5,
+        StartFinishBridge=5,
+        FinishBridge=6,
         StartPoint=10
     }
 
@@ -77,6 +88,11 @@ public class LevelGenerator : MonoBehaviour
                     case (int)MapStructEnum.FinishLineBlock:
                         MapStructRowInstantiate(finishLineBlock,ref pos);
                         break;
+                    case (int)MapStructEnum.StartFinishBridge:
+                        finishBridgeStartLocation=pos;
+                        MapStructRowInstantiate(bridgeBlock,ref pos);
+                        noBrickBlock--;
+                        break;
                     case (int)MapStructEnum.FinishBridge:
                         FinishBridgeInstantiate(pos);
                         break;
@@ -110,41 +126,125 @@ public class LevelGenerator : MonoBehaviour
         pos.y=0;
     }
 
+    private Direct CalculateBridgeDirection(Vector3 pos){
+        Vector3 direction=(pos-finishBridgeStartLocation).normalized;
+        Direct direct=Direct.None;
+        float angle1=Vector3.Angle(direction,Vector3.right);
+            // Calculate the angle between direction vector and Vector Left(-1,0,0)
+            float angle2=Vector3.Angle(direction,Vector3.left);
+            if(angle1>=0f&&angle1<=90f){
+                if(direction.y>=0){
+                    direct=angle1>=45f?Direct.Forward:Direct.Right;
+                }else{
+                    direct=angle1>=45f?Direct.Back:Direct.Right;
+                }
+            }
+            if(angle2>=0f&&angle2<=90f){
+                if(direction.y>=0){
+                    direct=angle2>=45f?Direct.Forward:Direct.Left;
+                }else{
+                    direct=angle2>=45f?Direct.Back:Direct.Left;
+                }
+            }
+        return direct;
+    }
+
     private void FinishBridgeInstantiate(Vector3 pos){
-        Vector3 startPoint=pos;
+        Direct direct=CalculateBridgeDirection(pos);
+        Debug.Log(direct);
         for(int i=0;i<noBrickBlock-1;i++){
             GameObject finishBridge= new GameObject("Finish Bridge");
-            finishBridge.gameObject.tag="Finish Bridge";
+            finishBridge.tag="Finish Bridge";
             GameObject blockObject=Instantiate(bridgeBlock,pos,brickBlock.transform.rotation);
-            blockObject.gameObject.tag="Finish Bridge";
+            blockObject.tag="Finish Bridge";
             blockObject.transform.SetParent(finishBridge.transform);
-            pos.z-=brickBlock.transform.localScale.z;
+            switch(direct){
+                case Direct.Right:
+                    pos.z-=brickBlock.transform.localScale.z;
+                    break;
+                case Direct.Left:
+                    pos.z-=brickBlock.transform.localScale.z;
+                    break;
+                case Direct.Back:
+                    pos.x-=brickBlock.transform.localScale.x;
+                    break;
+                case Direct.Forward:
+                    pos.x-=brickBlock.transform.localScale.x;
+                    break;
+            }
             blockObject=Instantiate(wallBlock,pos,brickBlock.transform.rotation);
             blockObject.transform.SetParent(finishBridge.transform);
-            pos.z+=brickBlock.transform.localScale.z*2;
+            switch(direct){
+                case Direct.Right:
+                    pos.z+=brickBlock.transform.localScale.z*2;
+                    break;
+                case Direct.Left:
+                    pos.z+=brickBlock.transform.localScale.z*2;
+                    break;
+                case Direct.Back:
+                    pos.x+=brickBlock.transform.localScale.x*2;
+                    break;
+                case Direct.Forward:
+                    pos.x+=brickBlock.transform.localScale.x*2;
+                    break;
+            }
+            
             blockObject=Instantiate(wallBlock,pos,brickBlock.transform.rotation);
             blockObject.transform.SetParent(finishBridge.transform);
-            pos.z-=brickBlock.transform.localScale.z;
-            pos.x+=brickBlock.transform.localScale.x;
+            switch(direct){
+                case Direct.Right:
+                    pos.z-=brickBlock.transform.localScale.z;
+                    pos.x+=brickBlock.transform.localScale.x;
+                    break;
+                case Direct.Left:
+                    pos.z+=brickBlock.transform.localScale.z;
+                    pos.x+=brickBlock.transform.localScale.x;
+                    break;
+                case Direct.Back:
+                    pos.x-=brickBlock.transform.localScale.x;
+                    pos.z+=brickBlock.transform.localScale.z;
+                    break;
+                case Direct.Forward:
+                    pos.x-=brickBlock.transform.localScale.x;
+                    pos.z-=brickBlock.transform.localScale.z;
+                    break;
+            }
+            
             finishBridge.transform.SetParent(gameObject.transform);
         }
-        Vector3 direction=(pos-startPoint).normalized;
         pos.y-=3;
-        Debug.Log(direction);
-        if(!(Vector3.Distance(direction,Vector3.down)<=0.01f)){
-            GameObject go=Instantiate(winPos,pos,Quaternion.Euler(new Vector3(0,90,0)));
-            go.transform.SetParent(gameObject.transform);
-        }else{
-            GameObject go=Instantiate(winPos,pos,winPos.transform.rotation);
-            go.transform.SetParent(gameObject.transform);
+        Vector3 direction=Vector3.zero;
+        Quaternion rotation=winPos.transform.rotation;
+        switch(direct){
+            case Direct.None:
+                break;
+            case Direct.Left:
+                direction=Vector3.left;
+                rotation=Quaternion.Euler(Vector3.up*-90);
+                break;
+            case Direct.Right:
+                direction=Vector3.right;
+                rotation=Quaternion.Euler(Vector3.up*90);
+                break;
+            case Direct.Back:
+                direction=Vector3.forward;
+                rotation=winPos.transform.rotation;
+                break;
+            case Direct.Forward:
+                direction=Vector3.back;
+                rotation=Quaternion.Euler(Vector3.up*180);
+                break;
+
         }
+        GameObject go=Instantiate(winPos,pos,rotation);
+        go.transform.SetParent(gameObject.transform);
         
     }
 
    
 
     private void OnEnable() {
-         if(level!=0){
+        if(level!=0){
             camera=Camera.main; 
             gameObject=new GameObject("Map"+level);
             gameObject.tag="Map";

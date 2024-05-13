@@ -9,8 +9,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject levelSelectionUI;
     [SerializeField] private GameObject inGameUI;
+    [SerializeField] private GameObject endGameUI;    
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private Animator transitionAnim;
     private static UIManager ins;
+    
+
     public static UIManager Ins =>ins;
 
     // Update is called once per frame
@@ -25,6 +29,7 @@ public class UIManager : MonoBehaviour
         levelSelectionUI.SetActive(false);
         inGameUI.SetActive(false);
         pauseMenu.SetActive(false);
+        endGameUI.SetActive(false);
     }
 
     public void ShowStartScreen()
@@ -46,18 +51,36 @@ public class UIManager : MonoBehaviour
     }
 
     public void ShowPauseMenu(){
-        showIngameUI();
+        ShowIngameUI();
         pauseMenu.SetActive(true);
     }
 
-    public void showIngameUI(){
+    public void ShowIngameUI(){
         DeactiveAllUI();
+        RunTransition();
         inGameUI.SetActive(true);
     }
 
-    internal void ShowLevelSelectionUI()
+    public void ShowLevelSelectionUI()
     {
         DeactiveAllUI();
         levelSelectionUI.SetActive(true);
+    }
+
+    public void RunTransition(){
+        transitionAnim.gameObject.SetActive(true);
+        StartCoroutine(SceneTransition());
+    }
+
+    IEnumerator SceneTransition(){
+        transitionAnim.SetTrigger("end");
+        yield return new WaitForSeconds(1);
+        transitionAnim.SetTrigger("start");
+        transitionAnim.gameObject.SetActive(false);
+    }
+
+    public void ShowEndGameUI()
+    {
+        endGameUI.SetActive(true);
     }
 }

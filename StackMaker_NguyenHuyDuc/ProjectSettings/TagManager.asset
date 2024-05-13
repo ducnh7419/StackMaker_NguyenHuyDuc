@@ -9,6 +9,7 @@ TagManager:
   - bridge
   - Finish Bridge
   - Chest
+  - Map
   layers:
   - Default
   - TransparentFX

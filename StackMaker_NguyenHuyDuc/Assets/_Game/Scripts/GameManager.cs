@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
         EndGame=7
     }
 
-    public State currState;
+    private State currState;
 
   
     // Update is called once per frame
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     private void OnGame()
     {
-        UIManager.Ins.showIngameUI();
+        UIManager.Ins.ShowIngameUI();
     }
 
     private void OnPauseGame()
@@ -110,12 +110,11 @@ public class GameManager : MonoBehaviour
 
     public void OnEndGame()
     {
-        // logic end game
-        Debug.Log("AAAA");
+        UIManager.Ins.ShowEndGameUI();
     }
 
     public void OnMainMenu() {
-        
+        LevelManager.Ins.DestroyLevel();
         UIManager.Ins.ShowMainMenuUI();
     }
 
