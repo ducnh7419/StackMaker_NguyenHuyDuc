@@ -56,9 +56,11 @@ public class LevelGenerator : MonoBehaviour
                             if(playerDirection.x==0){
                                 GameObject playerGo=Instantiate(player,playerPosition,Quaternion.Euler(playerDirection));
                                 camera.GetComponent<CameraFollow>().target = playerGo.transform;
+                                playerGo.tag="Player";
                             }else{
                                 GameObject playerGo=Instantiate(player,playerPosition,player.transform.rotation);
                                 camera.GetComponent<CameraFollow>().target = playerGo.transform;
+                                playerGo.tag="Player";
                             }    
                             startPoint=Vector3.zero;
                         }              
@@ -139,13 +141,20 @@ public class LevelGenerator : MonoBehaviour
         
     }
 
-    private void Start() {
-        if(level!=0){
+   
+
+    private void OnEnable() {
+         if(level!=0){
             camera=Camera.main; 
             gameObject=new GameObject("Map"+level);
+            gameObject.tag="Map";
             GenerateLevel(level);
-            
         }
+    }
+
+    private void OnDisable() {
+        Destroy(gameObject);
+        Destroy(GameObject.FindGameObjectWithTag("Player"));
     }
 
     public int[][] ReadTextFile(string filePath)
@@ -169,6 +178,7 @@ public class LevelGenerator : MonoBehaviour
         }
         else
         {
+            // UserDataManager.SaveGame(0);
             Debug.LogError("File not found at path: " + filePath);
         }
         return null;

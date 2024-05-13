@@ -28,13 +28,15 @@ public class Player : MonoBehaviour
     void OnInit(){
         isMoving=false;
         direct = Direct.None;
+        buttonUpPoint=Vector3.zero;
+        buttonDownPoint=Vector3.zero;
     }
     
 
     // Update is called once per frame
     private void Update()
     {
-        PlayerControl();      
+        PlayerControl();
     }
 
     private void PlayerControl(){
@@ -45,6 +47,11 @@ public class Player : MonoBehaviour
             if(Input.GetMouseButtonUp(0)){
                 buttonUpPoint=Input.mousePosition;
             }
+        }
+        if(Vector3.Distance(buttonDownPoint,buttonUpPoint)<0.0001f){
+            
+            OnInit();
+            return;
         }
         Vector3 direction=Vector3.zero;
         if(buttonDownPoint!=Vector3.zero&&buttonUpPoint!=Vector3.zero){

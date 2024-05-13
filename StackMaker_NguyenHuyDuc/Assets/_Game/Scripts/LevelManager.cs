@@ -19,7 +19,9 @@ public class LevelManager : MonoBehaviour
     }
 
     public void GenerateLevel(){
-        mapGenerator.GetComponent<LevelGenerator>().Level=1;
-        mapGenerator.SetActive(true);        
-    }    
+        mapGenerator.GetComponent<LevelGenerator>().Level=UserDataManager.LoadGame();
+        mapGenerator.SetActive(false);
+        mapGenerator.SetActive(true);
+    }
+
 }

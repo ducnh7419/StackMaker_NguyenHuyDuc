@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UserDataManager : MonoBehaviour
 { 
-    private static int currLevel=0;
+    private static int currLevel=1;
 
     private static void SaveGame(){
         currLevel++;
@@ -15,7 +15,8 @@ public class UserDataManager : MonoBehaviour
         return PlayerPrefs.GetInt("currLevel");
     }
 
-    public static void LoadGame(int level){
+    public static void SaveGame(int level){
         currLevel=level;
+        PlayerPrefs.SetInt("currLevel", currLevel);
     }
 }

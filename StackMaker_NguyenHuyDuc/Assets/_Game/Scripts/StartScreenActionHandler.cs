@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class BlinkText : MonoBehaviour
+public class StartScreenActionHandler : MonoBehaviour
 {
     [SerializeField]private TextMeshProUGUI text;
 
@@ -13,6 +12,15 @@ public class BlinkText : MonoBehaviour
         
         StartBlinking();
     }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetMouseButtonDown(0)){
+            GameManager.Ins.ChangeState(GameManager.State.MainMenu);
+        }
+    }
+
 
     IEnumerator Blink()
     {
