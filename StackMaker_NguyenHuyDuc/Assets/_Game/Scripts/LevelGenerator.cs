@@ -10,6 +10,7 @@ using UnityEngine.UIElements;
 public class LevelGenerator : MonoBehaviour
 {
     private new Camera camera;
+    [SerializeField] private GameObject backGroundImage;
     [SerializeField] private GameObject backgroundBlock;
     [SerializeField] private GameObject brickBlock;
     [SerializeField] private GameObject wallBlock;
@@ -39,7 +40,7 @@ public class LevelGenerator : MonoBehaviour
         WallBlock=2,
         BridegeBlock=3,
         FinishLineBlock=4,
-        StartFinishBridge=5,
+        StartFinishLine=5,
         FinishBridge=6,
         StartPoint=10
     }
@@ -88,10 +89,9 @@ public class LevelGenerator : MonoBehaviour
                     case (int)MapStructEnum.FinishLineBlock:
                         MapStructRowInstantiate(finishLineBlock,ref pos);
                         break;
-                    case (int)MapStructEnum.StartFinishBridge:
+                    case (int)MapStructEnum.StartFinishLine:
                         finishBridgeStartLocation=pos;
-                        MapStructRowInstantiate(bridgeBlock,ref pos);
-                        noBrickBlock--;
+                        MapStructRowInstantiate(finishLineBlock,ref pos);
                         break;
                     case (int)MapStructEnum.FinishBridge:
                         FinishBridgeInstantiate(pos);
@@ -152,7 +152,7 @@ public class LevelGenerator : MonoBehaviour
     private void FinishBridgeInstantiate(Vector3 pos){
         Direct direct=CalculateBridgeDirection(pos);
         Debug.Log(direct);
-        for(int i=0;i<noBrickBlock-1;i++){
+        for(int i=0;i<noBrickBlock+10;i++){
             GameObject finishBridge= new GameObject("Finish Bridge");
             finishBridge.tag="Finish Bridge";
             GameObject blockObject=Instantiate(bridgeBlock,pos,brickBlock.transform.rotation);
@@ -241,13 +241,19 @@ public class LevelGenerator : MonoBehaviour
         
     }
 
-   
+    private void OnInit(){
+        noBrickBlock=0;
+    }
 
     private void OnEnable() {
+        OnInit();
         if(level!=0){
-            camera=Camera.main; 
+            camera=Camera.main;
+            GameObject bg=Instantiate(backGroundImage,backGroundImage.transform.position,backGroundImage.transform.rotation);
             gameObject=new GameObject("Map"+level);
             gameObject.tag="Map";
+            bg.transform.SetParent(gameObject.transform);
+            bg.transform.GetChild(0).GetComponent<Canvas>().worldCamera=camera;
             GenerateLevel(level);
         }
     }
@@ -278,7 +284,6 @@ public class LevelGenerator : MonoBehaviour
         }
         else
         {
-            // UserDataManager.SaveGame(0);
             Debug.LogError("File not found at path: " + filePath);
         }
         return null;

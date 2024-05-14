@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,12 +10,14 @@ public class EndGameMenuActionHandler : MonoBehaviour
     [SerializeField] Button retryButton;
     [SerializeField] Button mainMenuButton;
     [SerializeField] Button nextLevelButton;
-    private bool isPaused=false;
+    [SerializeField] TextMeshProUGUI score;
     void Start()
     { 
         retryButton.onClick.AddListener(OnRetryClicked);
         mainMenuButton.onClick.AddListener(OnMainMenuClicked);
         nextLevelButton.onClick.AddListener(OnNextLevelButtonClicked);
+        score.SetText(UserDataManager.LoadScore().ToString());
+        score.fontSize = 150;
     }
 
     private void OnNextLevelButtonClicked(){

@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 5025897538297813861}
-  speed: 650
+  speed: 1000
 --- !u!1001 &5363770718728718992
 PrefabInstance:
   m_ObjectHideFlags: 0
