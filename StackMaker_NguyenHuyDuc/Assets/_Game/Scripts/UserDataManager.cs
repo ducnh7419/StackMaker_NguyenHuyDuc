@@ -7,7 +7,7 @@ public class UserDataManager : MonoBehaviour
 { 
 
     public static void SaveGame(){
-        PlayerPrefs.SetInt("currLevel", LoadGame()+1); 
+        PlayerPrefs.SetInt("currLevel", LoadGame()+1);
     }
 
     public static void SaveScore(int score){

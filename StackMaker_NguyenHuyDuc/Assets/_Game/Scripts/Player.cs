@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
@@ -6,6 +7,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
+    [SerializeField] Animator playerAnim;
     private Vector3 buttonDownPoint=Vector3.zero;
     private Vector3 buttonUpPoint=Vector3.zero;
     [SerializeField]private float speed;
@@ -30,8 +32,7 @@ public class Player : MonoBehaviour
     void OnInit(){
         score=0;
         noBrick=0;
-        isMoving=false;
-        direct = Direct.None;
+        StopMoving();
         buttonUpPoint=Vector3.zero;
         buttonDownPoint=Vector3.zero;
     }
@@ -99,8 +100,8 @@ public class Player : MonoBehaviour
                     }else{
                         StopMoving();
                     }
-                    rb.rotation=Quaternion.Euler(0,0,0);
-                    // rb.rotation=Quaternion.Euler(Vector3.up*180);
+                    // rb.rotation=Quaternion.Euler(0,0,0);
+                    rb.rotation=Quaternion.Euler(Vector3.up*180);
                     break;
                 case Direct.Back:
                     directionVector=Vector3.back;
@@ -111,8 +112,8 @@ public class Player : MonoBehaviour
                     }else{
                         StopMoving();
                     }
-                    // rb.rotation=Quaternion.Euler(0,0,0);
-                    rb.rotation=Quaternion.Euler(Vector3.down*180);
+                    rb.rotation=Quaternion.Euler(0,0,0);
+                    // rb.rotation=Quaternion.Euler(Vector3.down*180);
                     break;
                 case Direct.Left:
                     directionVector=Vector3.left;
@@ -123,7 +124,8 @@ public class Player : MonoBehaviour
                     }else{
                         StopMoving();
                     }           
-                    rb.rotation=Quaternion.Euler(Vector3.down*90);
+                    // rb.rotation=Quaternion.Euler(Vector3.down*90);
+                     rb.rotation=Quaternion.Euler(Vector3.up*90);
                     break;
                 case Direct.Right:
                     directionVector=Vector3.right;
@@ -134,7 +136,8 @@ public class Player : MonoBehaviour
                     }else{
                         StopMoving();
                     }
-                    rb.rotation=Quaternion.Euler(Vector3.up*90);
+                    // rb.rotation=Quaternion.Euler(Vector3.up*90);
+                    rb.rotation=Quaternion.Euler(Vector3.down*90);
                     break;
                 case Direct.None:
                     StopMoving();
@@ -159,10 +162,10 @@ public class Player : MonoBehaviour
                 block.transform.parent.GetChild(1).GetChild(0).GetComponent<Renderer>().material.color=Color.blue;
                 block.transform.parent.GetChild(2).GetChild(0).GetComponent<Renderer>().material.color=Color.green;
                 RemoveBrick(rb.gameObject,block);
-                // if(noBrick==0){
-                //     direct=Direct.None;
-                //     GameManager.Ins.ChangeState(GameManager.State.EndGame);
-                // }
+                if(noBrick==0){
+                    direct=Direct.None;
+                    GameManager.Ins.ChangeState(GameManager.State.EndGame);
+                }
             }
             block.GetComponent<Collider>().enabled=false;
         }
@@ -188,18 +191,25 @@ public class Player : MonoBehaviour
         }
         if (Physics.Raycast(transform.position, directionVector , out RaycastHit hit, 1f)){
             if(hit.collider.gameObject.CompareTag("Chest")){
-                Debug.Log("Hit");
                 GameObject closeChest=hit.collider.gameObject;
                 GameObject openChess=closeChest.transform.parent.GetChild(closeChest.transform.parent.childCount-1).gameObject;
                 openChess.SetActive(true);
                 closeChest.SetActive(false);
-                direct=Direct.None;
-                UserDataManager.SaveScore(score);
-                GameManager.Ins.ChangeState(GameManager.State.EndGame);
-                Time.timeScale=0;
+                StopMoving();
+                StartCoroutine(EndGame());            
             }
             
         }
+    }
+
+    IEnumerator EndGame(){
+        Debug.Log(score);
+        playerAnim.SetInteger("renwu", 2);
+        UserDataManager.SaveGame();
+        UserDataManager.SaveScore(score); 
+        yield return new WaitForSeconds(6);     
+        Time.timeScale=0;       
+        GameManager.Ins.ChangeState(GameManager.State.EndGame);
     }
 
     //Stop player when reaching wall or  bridge when he don't have enought brick

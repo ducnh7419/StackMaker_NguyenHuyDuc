@@ -74,7 +74,7 @@ public class UIManager : MonoBehaviour
 
     IEnumerator SceneTransition(){
         transitionAnim.SetTrigger("end");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         transitionAnim.SetTrigger("start");
         transitionAnim.gameObject.SetActive(false);
     }

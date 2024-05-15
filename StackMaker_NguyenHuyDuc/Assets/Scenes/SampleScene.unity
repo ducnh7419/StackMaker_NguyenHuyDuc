@@ -1482,7 +1482,7 @@ MonoBehaviour:
   bridgeBlock: {fileID: 5792613958688929218, guid: 1a22f1c6c3427ff4abe8601bddeedea6, type: 3}
   finishLineBlock: {fileID: 2192439993083102128, guid: f243a98e18497db44bfbc8ab731fda49, type: 3}
   winPos: {fileID: 5879156454356601932, guid: c829e579ecd6ab747bfe3cfeb0830393, type: 3}
-  player: {fileID: 2451869308115212638, guid: a7182a41afcc2ab4198795b0c8186aa8, type: 3}
+  player: {fileID: 2413697744150114513, guid: 8c855e30f6fbccc418dfa2cc554e3855, type: 3}
 --- !u!4 &424311669
 Transform:
   m_ObjectHideFlags: 0

@@ -15,14 +15,16 @@ public class EndGameMenuActionHandler : MonoBehaviour
     { 
         retryButton.onClick.AddListener(OnRetryClicked);
         mainMenuButton.onClick.AddListener(OnMainMenuClicked);
-        nextLevelButton.onClick.AddListener(OnNextLevelButtonClicked);
-        score.SetText(UserDataManager.LoadScore().ToString());
+        nextLevelButton.onClick.AddListener(OnNextLevelButtonClicked);     
         score.fontSize = 150;
+    }
+
+    private void Update() {
+        score.SetText(UserDataManager.LoadScore().ToString());
     }
 
     private void OnNextLevelButtonClicked(){
         Time.timeScale=1;
-        UserDataManager.SaveGame();
         GameManager.Ins.ChangeState(GameManager.State.StartGame);
     }
 
@@ -31,6 +33,7 @@ public class EndGameMenuActionHandler : MonoBehaviour
         GameManager.Ins.ChangeState(GameManager.State.MainMenu);
     }
     private void OnRetryClicked(){
+        UserDataManager.SaveGame(UserDataManager.LoadGame()-1);
         GameManager.Ins.ChangeState(GameManager.State.StartGame);
         Time.timeScale=1;
     }
