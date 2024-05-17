@@ -20,6 +20,8 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private GameObject player;
     private int level = 0;
     private new GameObject gameObject;
+
+    private new GameObject finishLine;
     private int noBrickBlock = 0;
 
     public enum Direct
@@ -51,6 +53,10 @@ public class LevelGenerator : MonoBehaviour
     {
         string path = String.Format("Assets/_Game/Resources/Level/{0}.txt", level);
         int[][] levelStruct = ReadTextFile(path);
+        if(levelStruct==null){
+            UserDataManager.SaveGame(UserDataManager.LoadGame()-1);
+            GameManager.Ins.ChangeState(GameManager.State.StartGame);
+        }
         Vector3 startPoint = new Vector3(0, 0, 0);
         Vector3 pos = new Vector3(0, 0, 0);
         for (int i = 0; i < levelStruct.GetLength(0); i++)
@@ -66,7 +72,7 @@ public class LevelGenerator : MonoBehaviour
                     case (int)MapStructEnum.BrickBlock:
                         if (startPoint != Vector3.zero)
                         {
-                            Vector3 playerDirection = (pos - startPoint).normalized * 90;
+                            Vector3 playerDirection = (pos - startPoint).normalized * -90;
                             // move player to the bottom edge of block 
                             Vector3 playerPosition = startPoint + new Vector3(0, -0.1f, 0);
                             if (playerDirection.x == 0)
@@ -104,7 +110,7 @@ public class LevelGenerator : MonoBehaviour
                         }
                         else{
                             FinishBridgeInstantiate(pos,firstBridgeBlock);
-                            pos.x += backgroundBlock.transform.localScale.x;
+                            MapStructRowInstantiate(finishLineBlock, ref pos);    
                         }
                         break;
                     //6
@@ -136,7 +142,11 @@ public class LevelGenerator : MonoBehaviour
 
         int noBackgroundBlk = 5;
         GameObject blockObject = Instantiate(gameOb, pos, gameOb.transform.rotation);
-        blockObject.transform.SetParent(gameObject.transform);
+        if(gameOb.CompareTag("FinishLine")){
+            blockObject.transform.SetParent(finishLine.transform);
+        }else{
+            blockObject.transform.SetParent(gameObject.transform);
+        }
         if (gameOb != bridgeBlock)
         {
             for (int k = 0; k < noBackgroundBlk; k++)
@@ -284,7 +294,9 @@ public class LevelGenerator : MonoBehaviour
             camera = Camera.main;
             GameObject bg = Instantiate(backGroundImage, backGroundImage.transform.position, backGroundImage.transform.rotation);
             gameObject = new GameObject("Map" + level);
+            finishLine= new GameObject("Finish Line");           
             gameObject.tag = "Map";
+            finishLine.transform.SetParent(gameObject.transform);
             bg.transform.SetParent(gameObject.transform);
             bg.transform.GetChild(0).GetComponent<Canvas>().worldCamera = camera;
             GenerateLevel(level);
@@ -318,9 +330,10 @@ public class LevelGenerator : MonoBehaviour
             return mapStruct;
         }
         else
-        {
+        {           
             Debug.LogError("File not found at path: " + filePath);
+            return null;
         }
-        return null;
+        
     }
 }

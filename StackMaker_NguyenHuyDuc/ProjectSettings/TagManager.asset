@@ -10,6 +10,7 @@ TagManager:
   - Finish Bridge
   - Chest
   - Map
+  - FinishLine
   layers:
   - Default
   - TransparentFX

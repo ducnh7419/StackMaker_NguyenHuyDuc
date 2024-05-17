@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
                     directionVector=Vector3.forward;
                     if(!CheckStopCondition(directionVector)){
                         isMoving=true;
-                        AddOrRemoveBrick();
+                        BlockInteractive();
                         rb.velocity=speed * Time.deltaTime * directionVector;
                     }else{
                         StopMoving();
@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
                     directionVector=Vector3.back;
                     if(!CheckStopCondition(directionVector)){
                         isMoving=true;
-                        AddOrRemoveBrick();
+                        BlockInteractive();
                         rb.velocity=speed * Time.deltaTime * directionVector;
                     }else{
                         StopMoving();
@@ -119,7 +119,7 @@ public class Player : MonoBehaviour
                     directionVector=Vector3.left;
                     if(!CheckStopCondition(directionVector)){
                         isMoving=true;
-                        AddOrRemoveBrick();
+                        BlockInteractive();
                         rb.velocity=speed * Time.deltaTime * directionVector;
                     }else{
                         StopMoving();
@@ -131,7 +131,7 @@ public class Player : MonoBehaviour
                     directionVector=Vector3.right;
                     if(!CheckStopCondition(directionVector)){
                         isMoving=true;
-                        AddOrRemoveBrick();
+                        BlockInteractive();
                         rb.velocity=speed * Time.deltaTime * directionVector;
                     }else{
                         StopMoving();
@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
              
     }
 
-    private void AddOrRemoveBrick(){
+    private void BlockInteractive(){
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f))
         {
             
@@ -166,6 +166,12 @@ public class Player : MonoBehaviour
                     direct=Direct.None;
                     GameManager.Ins.ChangeState(GameManager.State.EndGame);
                 }
+            }
+            if(block.CompareTag("FinishLine")){
+                for(int i=0;i<5;i++){
+                    block.transform.parent.GetChild(i).GetChild(0).GetComponent<ParticleSystem>().Play();
+                }
+                this.speed*=2;
             }
             block.GetComponent<Collider>().enabled=false;
         }
